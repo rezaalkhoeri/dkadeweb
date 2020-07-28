@@ -89,7 +89,7 @@
                     <th style="text-align:center;">Nomor Telepon</th>
                     <th style="text-align:center;">Email</th>
                     <th style="text-align:center;">Status</th>
-                    <th style="text-align:center;width:100px;">Action</th>
+                    <th style="text-align:center;width:130px;">Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -109,12 +109,16 @@
                 <td style="text-align: center;vertical-align: middle;">
                 <?php if($a->status_bayar =='L') { ?>
                     <label class="label label-success">LUNAS</label>
-                <?php } else {
-                    print_r($a->batasBayar);
-                } ?>
+                <?php } else if($a->status_bayar =='B') { ?>
+                    <label class="label label-warning">BELUM LUNAS</label>
+                <?php } else { ?>
+                    <label class="label label-danger">CANCEL</label>
+                <?php } ?>
+
                 </td>
                 <td>
-                    <a class="btn btn-xs btn-info" href="<?php echo base_url().'backend/orders/pembayaran_selesai/'.$a->id_pesanan?>" data-toggle="modal" title="Pembayaran Selesai"><span class="fa fa-check"></span> </a>
+                    <a class="btn btn-xs btn-success" href="<?php echo base_url().'backend/orders/pembayaran_selesai/'.$a->id_pesanan?>" data-toggle="modal" title="Pembayaran Selesai"><span class="fa fa-check"></span> </a>
+                    <a class="btn btn-xs btn-info" href="#ModalHapus<?php echo $a->id_pesanan;?>" data-toggle="modal" title="Detail"><span class="fa fa-eye"></span> </a>
                     <a class="btn btn-xs btn-warning" href="#modalEdit<?php echo $a->id_pesanan;?>" data-toggle="modal" title="Edit"><span class="fa fa-pencil"></span> </a>
                     <a class="btn btn-xs btn-danger" href="#ModalHapus<?php echo $a->id_pesanan;?>" data-toggle="modal" title="Batalkan"><span class="fa fa-close"></span> </a>
                 </td>
