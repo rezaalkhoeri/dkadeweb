@@ -47,10 +47,10 @@ class Event extends CI_Controller{
 				$this->mevent->Simpanevent($nama_event,$deskripsi,$gambar);
 				echo $this->session->set_flashdata('msg','success');
 				redirect('backend/event');
-		}else{
-	        echo $this->session->set_flashdata('msg','warning');
-	        redirect('backend/event');
-	    }
+			}else{
+				echo $this->session->set_flashdata('msg','warning');
+				redirect('backend/event');
+			}
 	                 
 	    }else{
 			redirect('backend/event');

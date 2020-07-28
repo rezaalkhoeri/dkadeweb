@@ -20,24 +20,14 @@ class Tarian extends CI_Controller{
 	    }
     }
 
-	function paket_tari(){
-		$x['title'] = 'Paket Tari';
-	    if($this->session->userdata('akses')=='1'){
-			$x['data'] = $this->mtarian->get_paket_tari();
-	        $this->load->view('backend/v_paket_tari',$x);
-	    }else{
-	        echo "Halaman tidak ditemukan";
-	    }
-    }
-
-    function simpan_wisata(){
+    function simpan_tari(){
     	$config['upload_path'] = './assets/gambars/'; //path folder
 	    $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp'; //type yang dapat diakses bisa anda sesuaikan
 	    $config['encrypt_name'] = TRUE; //nama yang terupload nantinya
 
 	    $this->upload->initialize($config);
 	    if(!empty($_FILES['filefoto']['name'])){
-	        if ($this->upload->do_upload('filefoto')){
+            if ($this->upload->do_upload('filefoto')){
 	        	$gbr = $this->upload->data();
 	            //Compress Image
 	            $config['image_library']='gd2';
@@ -51,32 +41,53 @@ class Tarian extends CI_Controller{
 	            $this->load->library('image_lib', $config);
 	            $this->image_lib->resize();
 
-	            $gambar=$gbr['file_name'];
-                $nama_wisata=$this->input->post('nama_wisata');
-                $deskripsi=$this->input->post('deskripsi');
+				$nama_tari=$this->input->post('nama_tari');
+				$harga=$this->input->post('harga');
+				$deskripsi=$this->input->post('deskripsi');
 
-				$this->mwisata->SimpanWisata($nama_wisata,$deskripsi,$gambar);
-				echo $this->session->set_flashdata('msg','success');
-				redirect('backend/wisata');
-		}else{
-	        echo $this->session->set_flashdata('msg','warning');
-	        redirect('backend/wisata');
-	    }
-	                 
-	    }else{
-			redirect('backend/wisata');
+				$data = array(
+					'nama_tari' => $nama_tari,
+					'harga' => $harga,
+					'deskripsi' => $deskripsi,
+					'gambar' => $gbr['file_name']
+				);
+
+                $this->mtarian->insert_data($data,'tari');
+				$notif = [
+					'alert' => 'success',
+					'pesan' => "Berhasil menyimpan"
+				];
+				echo $this->session->set_flashdata('msg',$notif);
+				redirect('backend/tarian');
+            } else {
+				$notif = [
+					'alert' => 'warning',
+					'pesan' => $this->upload->display_errors()
+				];
+				echo $this->session->set_flashdata('msg',$notif);
+				redirect('backend/tarian');
+			}
+		} else{
+				$notif = [
+					'alert' => 'warning',
+					'pesan' => $this->upload->display_errors()
+				];
+				echo $this->session->set_flashdata('msg',$notif);
+				redirect('backend/tarian');
 		}
+
     }
 
-    function update_wisata(){
-	    $config['upload_path'] = './assets/gambars/'; //path folder
+    function update_tari(){
+    	$config['upload_path'] = './assets/gambars/'; //path folder
 	    $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp'; //type yang dapat diakses bisa anda sesuaikan
 	    $config['encrypt_name'] = TRUE; //nama yang terupload nantinya
 
-	    $this->upload->initialize($config);
-	    if(!empty($_FILES['filefoto']['name'])){
-	        if ($this->upload->do_upload('filefoto')){
-	            $gbr = $this->upload->data();
+		$this->upload->initialize($config);
+		
+	    if(!empty($_FILES['filefoto_update']['name'])){
+            if ($this->upload->do_upload('filefoto_update')){
+	        	$gbr = $this->upload->data();
 	            //Compress Image
 	            $config['image_library']='gd2';
 	            $config['source_image']='./assets/gambars/'.$gbr['file_name'];
@@ -89,38 +100,75 @@ class Tarian extends CI_Controller{
 	            $this->load->library('image_lib', $config);
 	            $this->image_lib->resize();
 
-	            $gambar=$gbr['file_name'];
-	            $kode=$this->input->post('kode');
-                $nama_wisata=$this->input->post('nama_wisata');
-                $deskripsi=$this->input->post('deskripsi');
+				$idtari=$this->input->post('idtari');
+				$nama_tari=$this->input->post('nama_tari_update');
+				$harga=$this->input->post('harga_update');
+				$deskripsi=$this->input->post('deskripsi_update');
 
-				$this->mwisata->update_wisata_with_img($kode,$nama_wisata,$deskripsi,$gambar);
-				echo $this->session->set_flashdata('msg','info');
-				redirect('backend/wisata');
-	                    
-	    	}else{
-	        	echo $this->session->set_flashdata('msg','warning');
-	        	redirect('backend/wisata'); 
-	        }       
-	    }else{
-			$kode=$this->input->post('kode');
-            $nama_wisata=$this->input->post('nama_wisata');
-            $deskripsi=$this->input->post('deskripsi');
-			$this->mwisata->update_wisata_no_img($kode,$nama_wisata,$deskripsi);
-			echo $this->session->set_flashdata('msg','info');
-			redirect('backend/wisata');
-	    } 
+				$data = array(
+					'nama_tari' => $nama_tari,
+					'harga' => $harga,
+					'deskripsi' => $deskripsi,
+					'gambar' => $gbr['file_name']
+				);
 
+				$where = [
+					'idtari' => $idtari
+				];
+
+				$this->mtarian->update_data($where,$data,'tari');
+				$notif = [
+					'alert' => 'success',
+					'pesan' => "Berhasil update"
+				];
+
+				echo $this->session->set_flashdata('msg',$notif);
+				redirect('backend/tarian');
+            } else {
+				$notif = [
+					'alert' => 'warning',
+					'pesan' => $this->upload->display_errors()
+				];
+
+				echo $this->session->set_flashdata('msg',$notif);
+				redirect('backend/tarian');
+			}
+		} else{
+			$notif = [
+				'alert' => 'warning',
+				'pesan' => $this->upload->display_errors()
+			];
+
+			echo $this->session->set_flashdata('msg',$notif);
+			redirect('backend/tarian');
+		}
 	}
 
-    function hapus_wisata(){
+    function hapus_tari(){
 	    if($this->session->userdata('akses')=='1'){
-	        $id=$this->input->post('kode');
-	        $this->mwisata->hapus_wisata($id);
-	        echo $this->session->set_flashdata('msg','success-hapus');
-	        redirect('backend/wisata');
+			$idtari=$this->input->post('idtari');
+
+			$where = [
+				'idtari' => $idtari
+			];
+
+			$this->mtarian->hapus_data($where,'tari');
+			$notif = [
+				'alert' => 'success',
+				'pesan' => "Berhasil hapus data"
+			];
+
+			echo $this->session->set_flashdata('msg',$notif);
+			redirect('backend/tarian');
 	    }else{
-	        echo "Halaman tidak ditemukan";
+			$this->mtarian->hapus_data($where,'tari');
+			$notif = [
+				'alert' => 'warning',
+				'pesan' => "Data gagal dihapus"
+			];
+
+			echo $this->session->set_flashdata('msg',$notif);
+			redirect('backend/tarian');
 	    }
     }
 

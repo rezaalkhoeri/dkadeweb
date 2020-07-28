@@ -79,16 +79,17 @@
            
           <div class="box">
             <div class="box-header">
-              <a class="btn btn-success btn-flat" data-toggle="modal" data-target="#largeModal"><span class="fa fa-plus"></span> Add New</a>
+              <a class="btn btn-success btn-flat" data-toggle="modal" data-target="#addModal"><span class="fa fa-plus"></span> Add New</a>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
               <table id="example1" class="table table-striped" style="font-size:13px;">
                 <thead>
                 <tr>
-                    <th width="100px">No</th>
+                    <th width="50px">No</th>
                     <th>Gambar</th>
                     <th>Nama Tari</th>
+                    <th>Harga / Perform</th>
                     <th>Deskripsi</th>
                     <th width="100px">Action</th>
                 </tr>
@@ -96,7 +97,7 @@
                 <tbody>
                   <?php
                     $no=1;
-                    foreach($data as $a):                    
+                    foreach($data as $a):
                   ?>
                 <tr>
                   <td> <?php echo $no++;?> </td>
@@ -104,10 +105,11 @@
                     <?php if ($a->gambar == "") { ?>  
                         No Pict
                     <?php } else { ?>
-                        <img src="<?php echo base_url().'assets/images/'.$a->gambar;?>" class="img-circle" style="width:60px;">
+                        <img src="<?php echo base_url().'assets/gambars/'.$a->gambar;?>"style="width:100px;">
                     <?php } ?> 
                   </td>
                   <td><?php echo $a->nama_tari;?></td>
+                  <td><?php echo $a->harga;?></td>
                   <td><?php echo $a->deskripsi;?></td>
                   <td>
                         <a class="btn" data-toggle="modal" data-target="#ModalUpdate<?php echo $a->idtari;?>"><span class="fa fa-pencil"></span></a>
@@ -138,209 +140,122 @@
 </div>
 <!-- ./wrapper -->
 
-
-<!-- ============ MODAL ADD TARIAN =============== -->
-<div class="modal fade" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-        <h3 class="modal-title" id="myModalLabel">Tambah Tarian</h3>
-    </div>
-    <form class="form-horizontal" method="post" action="<?php echo base_url().'backend/paket_tour/simpan_paket'?>" enctype="multipart/form-data">
-        <div class="modal-body">
-
-            <div class="form-group">
-                <label class="control-label col-xs-2" >Tarian</label>
-                <div class="col-xs-8">
-                    <input name="nama_paket" class="form-control" type="text" placeholder="Nama Paket" required>
+  <!-- ============ MODAL ADD TARIAN =============== -->
+  <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+              <h3 class="modal-title" id="myModalLabel">Tambah Tarian</h3>
+          </div>
+            <form class="form-horizontal" method="post" action="<?php echo base_url().'backend/tarian/simpan_tari'?>" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="control-label col-xs-2" >Tarian</label>
+                        <div class="col-xs-8">
+                            <input name="nama_tari" class="form-control" type="text" placeholder="Nama Tari" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2" >Harga / Perform</label>
+                        <div class="col-xs-8">
+                            <input class="form-control" type="number" name="harga" required></input>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2" >Deskripsi</label>
+                        <div class="col-xs-8">
+                            <textarea class="ckeditor" name="deskripsi" rows="10" cols="10"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2" >Gambar</label>
+                        <div class="col-xs-8">
+                            <input type="file" name="filefoto" required>
+                        </div>
+                    </div>
                 </div>
-            </div>
-                   
-
-            <div class="form-group">
-                <label class="control-label col-xs-2" >Deskripsi</label>
-                <div class="col-xs-8">
-                    <textarea class="ckeditor" name="deskripsi" rows="10" cols="10"></textarea>
+                <div class="modal-footer">
+                    <button class="btn btn-flat" data-dismiss="modal" aria-hidden="true">Tutup</button>
+                    <button class="btn btn-primary btn-flat" type="submit">Simpan</button>
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label col-xs-2" >Kategori</label>
-                <div class="col-xs-8">
-                    <select name="kategori" class="form-control" required>
-                      <option value="">-PILIH-</option>
-                      <?php foreach($kat->result_array() as $k):
-                        $idkat=$k['id_kategori'];
-                        $kate=$k['kategori'];
-                      ?>
-                      <option value="<?php echo $idkat;?>"><?php echo $kate;?></option>
-                      <?php endforeach;?>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label col-xs-2" >Tarif Dewasa</label>
-                <div class="col-xs-8">
-                    <input name="hrg_dewasa" class="form-control" type="text" placeholder="Tarif Dewasa" required>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label col-xs-2" >Tarif Anak</label>
-                <div class="col-xs-8">
-                    <input name="hrg_anak" class="form-control" type="text" placeholder="Tarif Anak-Anak" required>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label col-xs-2" >Gambar</label>
-                <div class="col-xs-8">
-                    <input type="file" name="filefoto" required>
-                </div>
-            </div>
-
+            </form>
         </div>
-
-        <div class="modal-footer">
-            <button class="btn btn-flat" data-dismiss="modal" aria-hidden="true">Tutup</button>
-            <button class="btn btn-primary btn-flat">Simpan</button>
-        </div>
-    </form>
-    </div>
-    </div>
-</div>
-
-<?php
-    $no=0;
-    foreach($data->result_array() as $a):
-      $no++;
-      $id=$a['idpaket'];
-      $gambar=$a['gambar'];
-      $nama_paket=$a['nama_paket'];
-      $deskripsi=$a['deskripsi'];
-      $hrg_dewasa=$a['hrg_dewasa'];
-      $hrg_anak=$a['hrg_anak'];
-      $kategori_id=$a['kategori_id'];
-?>
-<!-- ============ MODAL EDIT TARIAN =============== -->
-<div class="modal fade" id="ModalUpdate<?php echo $id;?>" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-        <h3 class="modal-title" id="myModalLabel">Tambah Tarian </h3>
-    </div>
-    <form class="form-horizontal" method="post" action="<?php echo base_url().'backend/paket_tour/update_paket'?>" enctype="multipart/form-data">
-        <div class="modal-body">
-
-            <div class="form-group">
-                <label class="control-label col-xs-2" > Tarian</label>
-                <div class="col-xs-8">
-                    <input name="nama_paket" value="<?php echo $nama_paket;?>" class="form-control" type="text" placeholder="Nama Paket" required>
-                </div>
-            </div>
-                   
-
-            <div class="form-group">
-                <label class="control-label col-xs-2" >Deskripsi</label>
-                <div class="col-xs-8">
-                    <textarea class="ckeditor" name="deskripsi" rows="10" cols="10"><?php echo $deskripsi;?></textarea>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label col-xs-2" >Kategori</label>
-                <div class="col-xs-8">
-                    <select name="kategori" class="form-control" required>
-                      <option value="">-PILIH-</option>
-                      <?php foreach($kat->result_array() as $k):
-                        $idkat=$k['id_kategori'];
-                        $kate=$k['kategori'];
-                      ?>
-                      <?php if($idkat==$kategori_id):?>
-                        <option value="<?php echo $idkat;?>" selected><?php echo $kate;?></option>
-                      <?php else:?>
-                        <option value="<?php echo $idkat;?>"><?php echo $kate;?></option>
-                      <?php endif;?>
-                      <?php endforeach;?>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label col-xs-2" >Tarif Dewasa</label>
-                <div class="col-xs-8">
-                    <input name="hrg_dewasa" value="<?php echo $hrg_dewasa;?>" class="form-control" type="text" placeholder="Tarif Dewasa" required>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label col-xs-2" >Tarif Anak</label>
-                <div class="col-xs-8">
-                    <input name="hrg_anak" value="<?php echo $hrg_anak;?>" class="form-control" type="text" placeholder="Tarif Anak-Anak" required>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label col-xs-2" >Gambar</label>
-                <div class="col-xs-8">
-                    <input type="file" name="filefoto">
-                </div>
-            </div>
-
-        </div>
-
-        <div class="modal-footer">
-            <input type="hidden" name="kode" value="<?php echo $id;?>">
-            <button class="btn btn-flat" data-dismiss="modal" aria-hidden="true">Tutup</button>
-            <button class="btn btn-primary btn-flat">Update</button>
-        </div>
-    </form>
-    </div>
-    </div>
-</div>
-
-<?php endforeach;?>
-  
+      </div>
+  </div>
+    
   <?php
-        $no=0;
-        foreach($data->result_array() as $a):
-            $no++;
-            $id=$a['idpaket'];
-            $gambar=$a['gambar'];
-            $nama_paket=$a['nama_paket'];
-            $deskripsi=limit_words($a['deskripsi'],20);
-            $hrg_dewasa=$a['hrg_dewasa'];
-            $hrg_anak=$a['hrg_anak'];
-            $kategori_id=$a['kategori_id'];
+      foreach($data as $a):
   ?>
-  <!--Modal Hapus Post-->
-        <div class="modal fade" id="ModalHapus<?php echo $id;?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><span class="fa fa-close"></span></span></button>
-                        <h4 class="modal-title" id="myModalLabel">Hapus Tarian</h4>
+  <!-- ============ MODAL EDIT TARIAN =============== -->
+  <div class="modal fade" id="ModalUpdate<?php echo $a->idtari;?>" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+              <h3 class="modal-title" id="myModalLabel">Tambah Tarian </h3>
+          </div>
+          <form class="form-horizontal" method="post" action="<?php echo base_url().'backend/tarian/update_tari'?>" enctype="multipart/form-data">
+              <div class="modal-body">
+                    <input name="idtari" class="form-control" value="<?php echo $a->idtari;?>" type="hidden" placeholder="Nama Tari" required>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2" >Tarian</label>
+                        <div class="col-xs-8">
+                            <input name="nama_tari_update" class="form-control" value="<?php echo $a->nama_tari;?>" type="text" placeholder="Nama Tari" required>
+                        </div>
                     </div>
-                    <form class="form-horizontal" action="<?php echo base_url().'backend/paket_tour/hapus_paket'?>" method="post" enctype="multipart/form-data">
-                    <div class="modal-body">       
-                     <input type="hidden" name="kode" value="<?php echo $id;?>"/> 
-                          <p>Apakah Anda yakin mau menghapus Tarian <b><?php echo $nama_paket;?></b> ?</p>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2" >Harga / Perform</label>
+                        <div class="col-xs-8">
+                            <input class="form-control" type="number" value="<?php echo $a->harga;?>" name="harga_update" required></input>
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default btn-flat" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary btn-flat" id="simpan">Hapus</button>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2" >Deskripsi</label>
+                        <div class="col-xs-8">
+                            <textarea class="ckeditor" name="deskripsi_update" rows="10" cols="10"><?php echo $a->deskripsi;?></textarea>
+                        </div>
                     </div>
-                    </form>
-                </div>
-            </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2" >Gambar</label>
+                        <div class="col-xs-8">
+                            <input type="file" name="filefoto_update" value="<?php echo $a->gambar;?>" required>
+                        </div>
+                    </div>                
+              </div>
+              <div class="modal-footer">
+                  <button class="btn btn-flat" data-dismiss="modal" aria-hidden="true">Tutup</button>
+                  <button class="btn btn-primary btn-flat">Update</button>
+              </div>
+          </form>
         </div>
-  <?php endforeach;?>
-  
-  
+      </div>
+  </div>
 
+  <!--Modal Hapus Post-->
+  <div class="modal fade" id="ModalHapus<?php echo $a->idtari;?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><span class="fa fa-close"></span></span></button>
+                  <h4 class="modal-title" id="myModalLabel">Hapus Tari</h4>
+              </div>
+              <form class="form-horizontal" action="<?php echo base_url().'backend/tarian/hapus_tari'?>" method="post" enctype="multipart/form-data">
+              <div class="modal-body">       
+                      <input type="hidden" name="idtari" value="<?php echo $a->idtari;?>"/> 
+              <p>Apakah Anda yakin mau menghapus tari <b><?php echo $a->nama_tari;?></b> ?</p>
+                          
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-default btn-flat" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary btn-flat" id="simpan">Hapus</button>
+              </div>
+              </form>
+          </div>
+      </div>
+  </div>
+
+  <?php endforeach;?>
 
 <!-- jQuery 2.2.3 -->
 <script src="<?php echo base_url().'assets/plugins/jQuery/jquery-2.2.3.min.js'?>"></script>
@@ -375,11 +290,11 @@
   });
 </script>
     
-    <?php if($this->session->flashdata('msg')=='success'):?>
+    <?php if($this->session->flashdata('msg')['alert']=='success'):?>
         <script type="text/javascript">
                 $.toast({
                     heading: 'Success',
-                    text: "Tarian Berhasil disimpan ke database.",
+                    text: <?php echo json_encode($this->session->flashdata('msg')['pesan']) ?>,
                     showHideTransition: 'slide',
                     icon: 'success',
                     hideAfter: false,
@@ -409,6 +324,18 @@
                     hideAfter: false,
                     position: 'bottom-right',
                     bgColor: '#7EC857'
+                });
+        </script>
+    <?php elseif($this->session->flashdata('msg')['alert'] =='warning'):?>
+        <script type="text/javascript">
+                $.toast({
+                    heading: 'Warning',
+                    text: <?php echo json_encode($this->session->flashdata('msg')['pesan']) ?>,
+                    showHideTransition: 'slide',
+                    icon: 'warning',
+                    hideAfter: false,
+                    position: 'bottom-right',
+                    bgColor: 'orange'
                 });
         </script>
     <?php else:?>

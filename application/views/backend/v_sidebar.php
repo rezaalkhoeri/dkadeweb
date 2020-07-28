@@ -69,19 +69,6 @@
         </span>
         </a>
     </li>
-
-    <?php if ($title == "Paket Tari") { ?>
-        <li class="active">
-    <?php } else { ?>
-        <li>
-    <?php } ?>
-        <a href="<?php echo base_url().'backend/tarian/paket_tari'?>">
-        <i class="fa fa-ticket"></i> <span>Paket Tari</span>
-        <span class="pull-right-container">
-            <small class="label pull-right"></small>
-        </span>
-        </a>
-    </li>
     
     <?php if ($title == "Album" || $title == "Photos") { ?>
         <li class="treeview active">
@@ -101,8 +88,8 @@
         </ul>
     </li>
     <li>
-        <a href="<?php echo base_url().'backend/orders'?>">
-        <i class="fa fa-bell"></i> <span>Orders</span>
+        <a href="<?php echo base_url().'backend/pesanan'?>">
+        <i class="fa fa-bell"></i> <span>Pesanan</span>
         <span class="pull-right-container">
             <!-- <small class="label pull-right bg-red"><?php echo $jum_order;?></small> -->
         </span>

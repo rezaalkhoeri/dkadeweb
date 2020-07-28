@@ -84,8 +84,8 @@
             <table id="example1" class="table table-striped" style="font-size:13px;">
             <thead>
             <tr>
-                        <th>Photo</th>
-                        <th>Nama</th>
+                <th>Photo</th>
+                <th>Nama</th>
                 <th>Username</th>
                 <th>Password</th>
                 <th>Level</th>
@@ -109,7 +109,11 @@
                     <?php if ($level == 3) { ?>          
                         <img src="<?php echo base_url().'assets/images/user_blank.png';?>" class="img-circle" style="width:60px;">
                     <?php } else { ?>
-                        <img src="<?php echo base_url().'assets/images/'.$photo;?>" class="img-circle" style="width:60px;">
+                            <?php if (file_exists(base_url().'assets/images/'.$photo)) { ?>
+                                <img src="<?php echo base_url().'assets/images/'.$photo;?>" class="img-circle" style="width:60px;">
+                            <?php } else { ?>
+                                <img src="<?php echo base_url().'assets/images/user_blank.png';?>" class="img-circle" style="width:60px;">
+                           <?php } ?> 
                     <?php } ?> 
                 </td>
                 <td><?php echo $nama;?></td>
