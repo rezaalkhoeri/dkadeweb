@@ -1,14 +1,17 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Paket_tour extends CI_Controller {
+class tarian extends CI_Controller {
 	function __construct(){
         parent::__construct();
+		$this->load->model('mevent');
+		$this->load->model('mtarian');
         $this->load->model('mpaket');
         $this->load->model('mberita');
     }
 	public function index()
 	{
-        $x['paket']=$this->mberita->paket_footer();
+        $x['tari']=$this->mtarian->getTariFooter();
+        $x['event']=$this->mevent->tampil_event();
         $x['berita']=$this->mberita->berita_footer();
         $x['photo']=$this->mberita->get_photo();
 		$jum=$this->mpaket->tampil_paket();
@@ -31,16 +34,16 @@ class Paket_tour extends CI_Controller {
             $x['page'] =$this->pagination->create_links();
 		$x['news']=$this->mpaket->get_paket($offset,$limit);
         $x['brt']=$this->mpaket->tampil_paket();
-		$this->load->view('front/v_paket',$x);
+		$this->load->view('front/v_tarian',$x);
 	}
-	function detail_paket(){
-        $x['paket']=$this->mberita->paket_footer();
+	function detail_tari(){
+        $x['tari']=$this->mtarian->getTariFooter();
         $x['berita']=$this->mberita->berita_footer();
         $x['photo']=$this->mberita->get_photo();
 		$kode=$this->uri->segment(3);
-		$x['brt']=$this->mpaket->tampil_paket();
-		$x['news']=$this->mpaket->getpaket($kode);
-		$this->load->view('front/v_detail_paket',$x);
+        $x['event']=$this->mevent->tampil_event();
+        $x['detailtari']=$this->mtarian->getTari($kode);
+		$this->load->view('front/v_detail_tari',$x);
 	}
     function pesan_paket(){
         $x['paket']=$this->mberita->paket_footer();

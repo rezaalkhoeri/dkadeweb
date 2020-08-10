@@ -1,14 +1,3 @@
-<!--Counter Inbox-->
-<?php 
-    $query=$this->db->query("SELECT * FROM tbl_inbox WHERE inbox_status='1'");
-    $query2=$this->db->query("SELECT * FROM orders WHERE status_bayar <> 'LUNAS'");
-    $query3=$this->db->query("SELECT * FROM testimoni WHERE status ='0'");
-    $query4=$this->db->query("SELECT * FROM orders INNER JOIN pembayaran ON pembayaran.order_id = orders.id_order WHERE orders.status_bayar = 'BELUM LUNAS'");
-    $jum_pesan=$query->num_rows();
-    $jum_order=$query2->num_rows();
-    $jum_testimoni=$query3->num_rows();
-    $jum_konfirmasi=$query4->num_rows();
-?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -75,7 +64,14 @@
           <div class="box">
            
           <div class="box">
-            <!-- /.box-header -->
+            <div class="box-header">
+                <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#ModalReport">
+                  <span class="fa fa-file">
+                    Report
+                  </span> 
+                </button>
+            </div>
+            <hr>
             <div class="box-body">
               <table id="example1" class="table table-striped" style="font-size:12px;">
                 <thead>
@@ -83,7 +79,6 @@
 					          <th style="text-align:center;width: 50px;">No</th>
 					          <th style="text-align:center;width: 130px;">No Invoice</th>
                     <th style="text-align:center;">Batas Bayar</th>
-                    <th style="text-align:center;">Tanggal Bayar</th>
                     <th style="text-align:center;">Atas Nama</th>
                     <th style="text-align:center;">Alamat</th>
                     <th style="text-align:center;">Nomor Telepon</th>
@@ -93,34 +88,61 @@
                 </tr>
                 </thead>
                 <tbody>
-				<?php
-					$no=1;
+  				<?php
+	  				$no=1;
   					foreach ($data as $a) :
           ?>
             <tr>
                 <td style="vertical-align: middle;"><?php echo $no++; ?></td>
                 <td style="vertical-align: middle;"><?php echo $a->invoice; ?></td>
-                <td style="vertical-align: middle;"><?php echo $a->batasBayar; ?></td>
-                <td style="vertical-align: middle;"><?php echo $a->tglBayar; ?></td>
+                <td style="vertical-align: middle;"><?php echo date_format(date_create($a->batasBayar),"d-m-Y"); ?></td>
                 <td style="vertical-align: middle;"><?php echo $a->namaPemesan; ?></td>
                 <td style="vertical-align: middle;"><?php echo $a->alamat; ?></td>
                 <td style="vertical-align: middle;"><?php echo $a->notelp; ?></td>
                 <td style="vertical-align: middle;"><?php echo $a->email; ?></td>
                 <td style="text-align: center;vertical-align: middle;">
-                <?php if($a->status_bayar =='L') { ?>
-                    <label class="label label-success">LUNAS</label>
-                <?php } else if($a->status_bayar =='B') { ?>
-                    <label class="label label-warning">BELUM LUNAS</label>
-                <?php } else { ?>
-                    <label class="label label-danger">CANCEL</label>
-                <?php } ?>
+                  <?php 
+                      $dateNow = date_create(date("Y-m-d"));
+                      $batasBayar = date_create($a->batasBayar);
+                      $diff = date_diff($dateNow,$batasBayar);
+                  ?>
 
+                    <?php if($a->status_bayar =='L') { ?>
+                        <label class="label label-success">LUNAS</label>
+                    <?php } else if($a->status_bayar =='S') { ?>
+                        <label class="label label-warning">SELESAI</label>
+                    <?php } else { ?>
+                        <?php if($diff->invert == 0){ ?>
+                          <?php if($a->status_bayar =='B') { ?>
+                                <label class="label label-warning">BELUM LUNAS</label>
+                          <?php } else { ?>
+                                <label class="label label-danger">CANCEL</label>
+                          <?php } ?>
+                        <?php } else {?>
+                          <label class="label label-default">KADALUARSA</label>
+                        <?php } ?>
+                    <?php } ?>
                 </td>
-                <td>
-                    <a class="btn btn-xs btn-success" href="<?php echo base_url().'backend/orders/pembayaran_selesai/'.$a->id_pesanan?>" data-toggle="modal" title="Pembayaran Selesai"><span class="fa fa-check"></span> </a>
-                    <a class="btn btn-xs btn-info" href="#ModalHapus<?php echo $a->id_pesanan;?>" data-toggle="modal" title="Detail"><span class="fa fa-eye"></span> </a>
-                    <a class="btn btn-xs btn-warning" href="#modalEdit<?php echo $a->id_pesanan;?>" data-toggle="modal" title="Edit"><span class="fa fa-pencil"></span> </a>
-                    <a class="btn btn-xs btn-danger" href="#ModalHapus<?php echo $a->id_pesanan;?>" data-toggle="modal" title="Batalkan"><span class="fa fa-close"></span> </a>
+                <td> 
+                    <?php if($a->status_bayar =='L') { ?>
+                        <a class="btn btn-xs btn-info" data-toggle="modal" data-target="#ModalDetail<?php echo $a->id_pesanan ?>"><span class="fa fa-eye"></span></a>
+                        <a class="btn btn-xs btn-warning" data-toggle="modal" data-target="#ModalChange<?php echo $a->id_pesanan ?>"><span class="fa fa-times"></span></a>
+                    <?php } else if($a->status_bayar =='S') { ?>
+                        <a class="btn btn-xs btn-info" data-toggle="modal" data-target="#ModalDetail<?php echo $a->id_pesanan ?>"><span class="fa fa-eye"></span></a>
+                    <?php } else { ?>
+                        <?php if($diff->invert == 0){ ?>
+                          <?php if($a->status_bayar =='B') { ?>
+                              <a class="btn btn-xs btn-info" data-toggle="modal" data-target="#ModalDetail<?php echo $a->id_pesanan ?>"><span class="fa fa-eye"></span></a>
+                              <a class="btn btn-xs btn-warning" data-toggle="modal" data-target="#ModalChange<?php echo $a->id_pesanan ?>"><span class="fa fa-times"></span></a>
+                          <?php } else { ?>
+                              <a class="btn btn-xs btn-info" data-toggle="modal" data-target="#ModalDetail<?php echo $a->id_pesanan ?>"><span class="fa fa-eye"></span></a>
+                              <a class="btn btn-xs btn-danger" data-toggle="modal" data-target="#ModalHapus<?php echo $a->id_pesanan ?>"><span class="fa fa-trash"></span></a>
+                          <?php } ?>
+                        <?php } else {?>
+                          <a class="btn btn-xs btn-info" data-toggle="modal" data-target="#ModalDetail<?php echo $a->id_pesanan ?>"><span class="fa fa-eye"></span></a>
+                          <a class="btn btn-xs btn-danger" data-toggle="modal" data-target="#ModalHapus<?php echo $a->id_pesanan ?>"><span class="fa fa-trash"></span></a>
+                        <?php } ?>
+                    <?php } ?>        
                 </td>
             </tr>
 				<?php endforeach;?>
@@ -148,97 +170,205 @@
 </div>
 <!-- ./wrapper -->
 
-
-<!-- ============ MODAL EDIT ORDER =============== -->
-<?php
-    foreach($data->result_array() as $a):
-            $no++;
-            $id=$a['id_order'];
-            $tgl=$a['tanggal'];
-            $nama=$a['nama'];
-            $jenkel=$a['jenkel'];
-            $alamat=$a['alamat'];
-            $notelp=$a['notelp'];
-            $berangkat=$a['berangkat'];
-            $kembali=$a['kembali'];
-            $dewasa=$a['adult'];
-            $anak=$a['kids'];
-        ?>
-        <div id="modalEdit<?php echo $id?>" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
-            <div class="modal-dialog">
+  <?php foreach ($data as $a) : ?>
+      <!-- ============ MODAL EDIT ORDER =============== -->
+      <div id="ModalEdit<?php echo $a->id_pesanan?>" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
+          <div class="modal-dialog">
             <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-                <h3 class="modal-title" id="myModalLabel">Edit Order</h3>
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                  <h3 class="modal-title" id="myModalLabel">Edit Order</h3>
+              </div>
+              <form class="form-horizontal" method="post" action="<?php echo base_url().'backend/orders/edit_orders'?>">
+                  <div class="modal-body">
+                      <input name="kode" type="hidden" value="<?php echo $a->id_pesanan;?>">
+                      <div class="form-group">
+                          <label class="control-label col-xs-3" >Invoice</label>
+                          <div class="col-xs-9">
+                              <input name="dewasa" class="form-control" min="1" type="number" value="<?php echo $a->invoice;?>" style="width:280px;" required>
+                          </div>
+                      </div>                    
+                      <div class="form-group">
+                          <label class="control-label col-xs-3" >Batas Bayar</label>
+                          <div class="col-xs-9">
+                              <input name="anaks" class="form-control" min="0" type="number" value="<?php echo $a->batasBayar;?>" style="width:280px;" required>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button class="btn" data-dismiss="modal" aria-hidden="true">Tutup</button>
+                      <button type="submit" class="btn btn-primary">Update</button>
+                  </div>
+              </form>
             </div>
-            <form class="form-horizontal" method="post" action="<?php echo base_url().'backend/orders/edit_orders'?>">
-                <div class="modal-body">
-                    <input name="kode" type="hidden" value="<?php echo $id;?>">
-
-            <div class="form-group">
-                <label class="control-label col-xs-3" >Dewasa</label>
-                <div class="col-xs-9">
-                    <input name="dewasa" class="form-control" min="1" type="number" value="<?php echo $dewasa;?>" style="width:280px;" required>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label class="control-label col-xs-3" >Anak-Anak</label>
-                <div class="col-xs-9">
-                    <input name="anaks" class="form-control" min="0" type="number" value="<?php echo $anak;?>" style="width:280px;" required>
-                </div>
-            </div>
-
           </div>
-                <div class="modal-footer">
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">Tutup</button>
-                    <button type="submit" class="btn btn-primary">Update</button>
-                </div>
-            </form>
-        </div>
-        </div>
-        </div>
-    <?php endforeach;?>
+      </div>	
+      
+      <!-- ============ MODAL DETAIL TARIAN =============== -->    
+      <div class="modal fade" id="ModalDetail<?php echo $a->id_pesanan?>" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
+          <div class="modal-dialog modal-md">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                  <h3 class="modal-title" id="myModalLabel">Detail Pesanan </h3>
+              </div>
+              <form class="form-horizontal" method="post" action="" enctype="multipart/form-data">
+                  <div class="modal-body">
+                    <div class="form-group">
+                        <label class="control-label col-xs-3"> Nama Tari </label>
+                        <div class="col-xs-8">
+                            <input name="namaTari" value="<?php echo $a->nama_tari;?>" class="form-control" type="text" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-3"> Tanggal Tampil </label>
+                        <div class="col-xs-8">
+                            <input name="tanggalTampil" value="<?php echo $a->tanggalTampil;?>" class="form-control" type="text" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-3"> Metode Bayar </label>
+                        <div class="col-xs-8">
+                            <input name="metode" value="<?php echo $a->metode;?>" class="form-control" type="text" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-3"> Bank </label>
+                        <div class="col-xs-8">
+                            <input name="bank" value="<?php echo $a->bank;?>" class="form-control" type="text" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-3"> Nomor Rekening </label>
+                        <div class="col-xs-8">
+                            <input name="norek" value="<?php echo $a->norek;?>" class="form-control" type="text" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-3"> Keterangan </label>
+                        <div class="col-xs-8">
+                              <textarea name="keterangan" class="form-control" cols="30" rows="3" disabled><?php echo $a->keterangan;?></textarea>
+                        </div>
+                    </div>
 
-	
-	<?php foreach ($data->result_array() as $a) :
-        $id=$a['id_order'];
-        $tgl=$a['tanggal'];
-        $nama=$a['nama'];
-        $jenkel=$a['jenkel'];
-        $alamat=$a['alamat'];
-        $notelp=$a['notelp'];
-        $berangkat=$a['berangkat'];
-        $kembali=$a['kembali'];
-        $total=$a['total'];
-        $dewasa=$a['adult'];
-        $anak=$a['kids'];
-        $status=$a['status_bayar'];
-  ?>
-	<!--Modal Hapus Order-->
-        <div class="modal fade" id="ModalHapus<?php echo $id;?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><span class="fa fa-close"></span></span></button>
-                        <h4 class="modal-title" id="myModalLabel">Hapus Order</h4>
-                    </div>
-                    <form class="form-horizontal" action="<?php echo base_url().'backend/orders/hapus_order'?>" method="post" enctype="multipart/form-data">
-                    <div class="modal-body">       
-							       <input type="hidden" name="kode" value="<?php echo $id;?>"/> 
-                            <p>Apakah Anda yakin mau menghapus orderan dari <b><?php echo $nama;?></b>?</p>
-                               
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default btn-flat" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary btn-flat" id="simpan">Hapus</button>
-                    </div>
-                    </form>
-                </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button class="btn btn-flat" data-dismiss="modal" aria-hidden="true">Close</button>
+                  </div>
+              </form>
             </div>
-        </div>
-	<?php endforeach;?>
-	
+          </div>
+      </div>
+
+      <!-- ============ MODAL APPROVE TARIAN =============== -->    
+      <div class="modal fade" id="ModalApprove<?php echo $a->id_pesanan?>" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
+          <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                  <h3 class="modal-title" id="myModalLabel"> Approve Pesanan </h3>
+              </div>
+              <form class="form-horizontal" method="post" action="<?php echo base_url().'backend/tarian/update_tari'?>" enctype="multipart/form-data">
+                  <div class="modal-body">
+                      Approve Pesanan <strong> <?php echo $a->invoice?> </strong> ?
+                  </div>
+                  <div class="modal-footer">
+                      <button class="btn btn-flat" data-dismiss="modal" aria-hidden="true">Close</button>
+                      <button class="btn btn-primary btn-flat">Approve</button>
+                  </div>
+              </form>
+            </div>
+          </div>
+      </div>
+
+      <!-- ============ MODAL Cancel TARIAN =============== -->    
+      <div class="modal fade" id="ModalChange<?php echo $a->id_pesanan?>" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
+          <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                  <h3 class="modal-title" id="myModalLabel"> Reject Pesanan </h3>
+              </div>
+              <form class="form-horizontal" method="post" action="<?php echo base_url().'backend/pesanan/cancel'?>" enctype="multipart/form-data">
+                  <input type="hidden" name="idPesanan" value="<?php echo $a->id_pesanan?>">
+                  <div class="modal-body">
+                      Reject Pesanan <strong> <?php echo $a->invoice?> </strong> ?
+                  </div>
+                  <div class="modal-footer">
+                      <button class="btn btn-flat" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                      <button class="btn btn-primary btn-flat" type="submit">OK</button>
+                  </div>
+              </form>
+            </div>
+          </div>
+      </div>
+
+      <!-- ============ MODAL hapus TARIAN =============== -->    
+      <div class="modal fade" id="ModalHapus<?php echo $a->id_pesanan?>" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
+          <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                  <h3 class="modal-title" id="myModalLabel"> Hapus Pesanan </h3>
+              </div>
+              <form class="form-horizontal" method="post" action="<?php echo base_url().'backend/pesanan/hapus'?>" enctype="multipart/form-data">
+                  <input type="hidden" name="idPesanan" value="<?php echo $a->id_pesanan?>">
+                  <div class="modal-body">
+                      Hapus Pesanan <strong> <?php echo $a->invoice?> </strong> ?
+                  </div>
+                  <div class="modal-footer">
+                      <button class="btn btn-flat" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                      <button class="btn btn-primary btn-flat" type="submit">OK</button>
+                  </div>
+              </form>
+            </div>
+          </div>
+      </div>
+
+  <?php endforeach;?>
+
+
+      <!-- ============ MODAL DETAIL TARIAN =============== -->    
+      <div class="modal fade" id="ModalReport" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
+          <div class="modal-dialog modal-md">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                  <h3 class="modal-title" id="myModalLabel">Filter Report </h3>
+              </div>
+              <form class="form-horizontal" method="post" action="<?php echo base_url().'backend/pesanan/reportFilter'?>" enctype="multipart/form-data">
+                  <div class="modal-body">
+                    <div class="form-group">
+                        <label class="control-label col-xs-3"> Dari Tanggal </label>
+                        <div class="col-xs-8">
+                          <input class="form-control" type="date" name="dariTanggal">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-3"> Sampai Tanggal </label>
+                        <div class="col-xs-8">
+                          <input class="form-control" type="date" name="sampaiTanggal">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-3"> Status </label>
+                        <div class="col-xs-8">
+                          <select name="status" class="form-control" id="">
+                            <option value="L"> LUNAS </option>
+                            <option value="B"> BELUM LUNAS </option>
+                            <option value="C"> CANCEL </option>
+                          </select>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button class="btn btn-primary" type="submit">Filter</button>
+                      <button class="btn btn-flat" data-dismiss="modal" aria-hidden="true">Close</button>
+                  </div>
+              </form>
+            </div>
+          </div>
+      </div>
 	
 
 

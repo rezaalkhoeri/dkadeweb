@@ -76,18 +76,11 @@
                             </div>
                         </div>
                         <div class="two-third column last">
-                            <form style="margin-left:120px;" action="<?php echo base_url().'paket_tour/order'?>" method="post">
+                            <form style="margin-left:120px;" action="<?php echo base_url().'order/submitOrder'?>" method="post">
                                 <h3><span class="left">Formulir Pemesanan</span></h3>
                                 <p>
-                                    <label for="firstname" class="required label">Nama Lengkap:</label>
-                                    <input id="firstname" type="text" name="nama" style="width:300px;" required/>
-                                </p>
-                                <p>
-                                    <label for="payment" class="required label">Jenis Kelamin:</label>
-                                    <select id="payment" class="" name="jenkel" style="width:300px;" required>
-                                        <option value="L">Laki-Laki</option>
-                                        <option value="P">Perempuan</option>
-                                    </select>
+                                    <label for="nama" class="required label">Nama Lengkap:</label>
+                                    <input id="nama" type="text" name="nama" style="width:300px;" required/>
                                 </p>
                                 <p>
                                     <label id="address-label" for="address" class="required label">Alamat:</label>
@@ -99,48 +92,40 @@
                                 </p>
                                 <p>
                                     <label for="email" class="required label">Email:</label>
-                                    <input id="email" class="" placeholder="codetravel@gmail.com" type="text" name="email" style="width:300px;" required/>
+                                    <input id="email" class="" placeholder="iniemail@gmail.com" type="text" name="email" style="width:300px;" required/>
                                 </p>
-                                <h3 class="extra-margin top"><span class="left">Wisata Info</span></h3>
+                                <h3 class="extra-margin top"><span class="left">Pilih Tari </span></h3>
                                 <p>
-                                    <label for="room-type" class="required label">Paket Pulau:</label>
-                                    <input type="hidden" name="paket" class="" value="<?php echo $b['idpaket']?>" style="width:360px;"/>
-                                    <input type="text" name="nama_paket" class="" value="<?php echo $b['nama_paket']?>" style="width:400px;" readonly="readonly" required/>
-                                    
-                                </p>
-                                <p>
-                                    <label for="checkin" class="required label">Keberangkatan:</label>
-                                    <input type="text" readonly="readonly" id="checkin" class="datepicker" name="berangkat" style="width:300px;" required/>
-                                
-                                </p>
-                                <p>
-                                    <label for="checkout" class="required label">Kepulangan:</label>
-                                    <input type="text" readonly="readonly" id="checkout" class="datepicker" name="kembali" style="width:300px;" required/>
+                                    <label for="tari" class="required label">Tarian:</label>
+                                    <select name="tari" id="tari" style="width:300px;">
+                                        <?php foreach ($tarianList as $row) { ?>
+                                            <option value="<?php echo $row->idtari; ?>" <?php if($row->idtari == $this->uri->segment(3)) { echo "selected"; } ?>>
+                                                <?php echo $row->nama_tari; ?>
+                                            </option>
+                                        <?php } ?>
+                                    </select>
                                 </p>
                                 <p>
-                                    <label for="adultamt" class="required label">Dewasa:</label>
-                                    <input type="text" id="adultamt" name="adultamt" value="1" class="spinner" />
+                                    <label for="tglTampil" class="required label">Tanggal Tampil</label>
+                                    <input type="date" class="" name="tglTampil" style="width:300px;" required>
                                 </p>
                                 <p>
-                                    <label for="childrenamt" class="required label">Anak-Anak:</label>
-                                    <input type="text" id="childrenamt" name="childrenamt" value="0" class="spinner-min0" />
-                                </p>
-                                
+                                    <label for="metodeBayar" class="required label">Metode Bayar:</label>
+                                    <select name="metodeBayar" id="metodeBayar" style="width:300px;">
+                                        <?php foreach ($byr->result_array() as $row) { ?>
+                                            <option value="<?php echo $row['id_metode']; ?>"><?php echo $row['metode'].' | '.$row['bank']; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </p>                                
                                 <p>
-                                    <label id="note" for="notebox" class="label">Permintaan Khusus:</label>
-                                    <textarea id="notebox" name="notebox" cols="28" rows="5" style="width:300px;"></textarea>
-                                </p>
-
-                                <p>
-                                    <input type="hidden" id="status_bayar" name="status_bayar" value="BELUM LUNAS"/>
-                                </p>
-                                
+                                    <label id="note" for="notebox" class="label">Keterangan:</label>
+                                    <textarea id="keterangan" name="keterangan" cols="28" rows="5" style="width:300px;"></textarea>
+                                </p>                                
                                 <p>
                                     <label></label>
-                                    <button type="submit" class="medium blue button">Lanjutkan</button>
+                                    <button type="submit" class="medium blue button">Order</button>
                                 </p>
-                            </form>
-                            
+                            </form>                            
                         </div>
                     </div>
                 </div>

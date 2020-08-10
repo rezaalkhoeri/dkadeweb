@@ -1,14 +1,3 @@
-<!--Counter Inbox-->
-<?php 
-    $query=$this->db->query("SELECT * FROM tbl_inbox WHERE inbox_status='1'");
-    $query2=$this->db->query("SELECT * FROM orders WHERE status_bayar <> 'LUNAS'");
-    $query3=$this->db->query("SELECT * FROM testimoni WHERE status ='0'");
-    $query4=$this->db->query("SELECT * FROM orders INNER JOIN pembayaran ON pembayaran.order_id = orders.id_order WHERE orders.status_bayar = 'BELUM LUNAS'");
-    $jum_pesan=$query->num_rows();
-    $jum_order=$query2->num_rows();
-    $jum_testimoni=$query3->num_rows();
-    $jum_konfirmasi=$query4->num_rows();
-?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -81,42 +70,29 @@
                 <thead>
                 <tr>
 					          <th style="text-align:center;width: 120px;vertical-align:middle;">No Invoice</th>
-                    <th style="text-align:center;width: 160px;vertical-align:middle;">Tgl Transfer</th>
-                    <th style="text-align:center;width: 140px;vertical-align:middle;">Total Bayar</th>
-                    <th style="text-align:center;width: 140px;vertical-align:middle;">Jumlah Transfer</th>
-                    <th style="text-align:center;width: 200px;vertical-align:middle;">Pengirim</th>
-                    <th style="text-align:center;width:100px;">Aksi</th>
+					          <th style="text-align:center;width: 120px;vertical-align:middle;">Nominal</th>
+                    <th style="text-align:center;width: 140px;vertical-align:middle;">Tanggal Transfer</th>
+                    <th style="text-align:center;width: 140px;vertical-align:middle;">Tanggal Konfrmasi</th>
+                    <th style="text-align:center;width: 160px;vertical-align:middle;">Bukti Transfer</th>
+                    <th style="text-align:center;width:100px;">Action</th>
                 </tr>
                 </thead>
                 <tbody>
-				<?php
-					$no=0;
-  					foreach ($data->result_array() as $a) :
-  					    $no++;
-                $id=$a['id_bayar'];
-                $tgl_bayar=$a['tgl_bayar'];
-                $metode=$a['metode'];
-                $bank=$a['bank'];
-                $invoice=$a['order_id'];
-                $jml=$a['jumlah'];
-                $bukti=$a['bukti_transfer'];
-                $status=$a['status_bayar'];
-                $pengirim=$a['pengirim'];
-                $total=$a['total'];
-                           
-          ?>
-            <tr>
-                <td style="text-align: center;vertical-align:middle;"><?php echo $invoice; ?></td>
-                <td style="text-align: center;vertical-align:middle;"><?php echo $tgl_bayar; ?></td>
-                <td style="text-align: right;vertical-align:middle;"><b><?php echo 'Rp. '.number_format($total); ?></b></td>
-                <td style="text-align: right;vertical-align:middle;"><b><?php echo 'Rp. '.number_format($jml); ?></b></td>
-                <td style="text-align: center;vertical-align:middle;"><?php echo $pengirim; ?></td>
-                <td style="text-align: center;vertical-align: middle;">
-                    <a class="btn" href="#ModalCheckBukti<?php echo $id?>" data-toggle="modal" title="Lihat Bukti Transfer"><span class="fa fa-eye"></span> </a>
-                    <a class="btn" href="#ModalHapus<?php echo $id;?>" data-toggle="modal" title="Hapus"><span class="fa fa-trash"></span> </a>
-                </td>
-            </tr>
-				<?php endforeach;?>
+            <?php
+              $no=0;
+              foreach ($data as $a) {
+            ?>
+              <tr>
+                  <td style="text-align: center;vertical-align:middle;"><?php echo $a->invoice; ?></td>
+                  <td style="text-align: right;vertical-align:middle;"><b><?php echo 'Rp. '.number_format($a->harga); ?></b></td>
+                  <td style="text-align: center;vertical-align:middle;"><?php echo $a->tanggalTransfer; ?></td>
+                  <td style="text-align: center;vertical-align:middle;"><?php echo $a->createdDate; ?></td>
+                  <td style="text-align: center;vertical-align:middle;"> <img width="150" src="<?php echo base_url()."/assets/bukti_transfer/".$a->bukti_transfer; ?>"></td>
+                  <td style="text-align: center;vertical-align: middle;">
+                      <a class="btn" href="#ModalDetail<?php echo $a->id_bayar?>" data-toggle="modal" title="Lihat Bukti Transfer"><span class="fa fa-eye"></span> </a>
+                  </td>
+              </tr>
+            <?php } ?>
                 </tbody>
               </table>
             </div>
@@ -140,85 +116,69 @@
   <div class="control-sidebar-bg"></div>
 </div>
 <!-- ./wrapper -->
-
-
-<!-- ============ MODAL EDIT ORDER =============== -->
-<?php
-    foreach($data->result_array() as $a):
-            $no++;
-            $id=$a['id_bayar'];
-            $tgl_bayar=$a['tgl_bayar'];
-            $metode=$a['metode'];
-            $bank=$a['bank'];
-            $invoice=$a['order_id'];
-            $jml=$a['jumlah'];
-            $bukti=$a['bukti_transfer'];
-            $status=$a['status'];
-            $pengirim=$a['pengirim'];
-            $total=$a['total'];
-        ?>
-        <div id="ModalCheckBukti<?php echo $id?>" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+    <?php foreach ($data as $a) { ?>
+      <!-- ============ MODAL DETAIL TARIAN =============== -->    
+      <div class="modal fade" id="ModalDetail<?php echo $a->id_bayar?>" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
+          <div class="modal-dialog modal-md">
             <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-                <h3 class="modal-title" id="myModalLabel">Bukti Transfer</h3>
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                  <h3 class="modal-title" id="myModalLabel">Detail Konfirmasi Pembayaran </h3>
+              </div>
+              <form class="form-horizontal" method="post" action="" enctype="multipart/form-data">
+                  <div class="modal-body">
+                    <div class="form-group">
+                        <label class="control-label col-xs-3"> Nama Tari </label>
+                        <div class="col-xs-8">
+                            <input name="namaTari" value="<?php echo $a->nama_tari;?>" class="form-control" type="text" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-3"> Tanggal Tampil </label>
+                        <div class="col-xs-8">
+                            <input name="tanggalTampil" value="<?php echo $a->tanggalTampil;?>" class="form-control" type="text" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-3"> Metode Bayar </label>
+                        <div class="col-xs-8">
+                            <input name="metode" value="<?php echo $a->metode;?>" class="form-control" type="text" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-3"> Bank </label>
+                        <div class="col-xs-8">
+                            <input name="bank" value="<?php echo $a->bank;?>" class="form-control" type="text" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-3"> Nomor Rekening </label>
+                        <div class="col-xs-8">
+                            <input name="norek" value="<?php echo $a->norek;?>" class="form-control" type="text" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-3"> Keterangan </label>
+                        <div class="col-xs-8">
+                              <textarea name="keterangan" class="form-control" cols="30" rows="3"><?php echo $a->keterangan;?></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-3"> Keterangan </label>
+                        <div class="col-xs-8">
+                            <img src="<?php echo base_url()."/assets/bukti_transfer/".$a->bukti_transfer; ?>" alt="" width="370px" srcset="">
+                        </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button class="btn btn-flat" data-dismiss="modal" aria-hidden="true">Close</button>
+                  </div>
+              </form>
             </div>
-            <form class="form-horizontal" method="post" action="<?php echo base_url().'backend/konfirmasi/pembayaran_selesai'?>">
-                <div class="modal-body">
-                    <input name="kode" type="hidden" value="<?php echo $invoice;?>">
-                    <img height="500" src="<?php echo base_url().'assets/bukti_transfer/'.$bukti;?>">
-
           </div>
-                <div class="modal-footer">
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">Tutup</button>
-                    <button type="submit" class="btn btn-primary">Ok</button>
-                </div>
-            </form>
-        </div>
-        </div>
-        </div>
-    <?php endforeach;?>
+      </div>
 
-	
-	<?php foreach ($data->result_array() as $a) :
-        $id=$a['id_bayar'];
-        $tgl_bayar=$a['tgl_bayar'];
-        $metode=$a['metode'];
-        $bank=$a['bank'];
-        $invoice=$a['order_id'];
-        $jml=$a['jumlah'];
-        $bukti=$a['bukti_transfer'];
-        $status=$a['status'];
-        $pengirim=$a['pengirim'];
-        $total=$a['total'];
-  ?>
-	<!--Modal Hapus Order-->
-        <div class="modal fade" id="ModalHapus<?php echo $id;?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><span class="fa fa-close"></span></span></button>
-                        <h4 class="modal-title" id="myModalLabel">Hapus Konfirmasi</h4>
-                    </div>
-                    <form class="form-horizontal" action="<?php echo base_url().'backend/konfirmasi/hapus_konfirmasi'?>" method="post" enctype="multipart/form-data">
-                    <div class="modal-body">       
-							       <input type="hidden" name="kode" value="<?php echo $id;?>"/> 
-                            <p>Apakah Anda yakin mau menghapus konfirmasi dari <b><?php echo $pengirim;?></b>?</p>
-                               
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default btn-flat" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary btn-flat" id="simpan">Hapus</button>
-                    </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-	<?php endforeach;?>
-	
-	
-
+    <?php } ?>
 
 <!-- jQuery 2.2.3 -->
 <script src="<?php echo base_url().'assets/plugins/jQuery/jquery-2.2.3.min.js'?>"></script>

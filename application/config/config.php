@@ -15,7 +15,7 @@
 |
 */
 $config['base_url']	= 'http://localhost/dkadeweb/';
-
+$config['composer_autoload'] = "vendor/autoload.php";
 /*
 |--------------------------------------------------------------------------
 | Index File

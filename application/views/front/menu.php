@@ -16,13 +16,13 @@
                             </ul>
                         </li>
                         <li>
-                            <a href="<?php echo base_url().'event_post'?>">Eventttt</a>
+                            <a href="<?php echo base_url().'event_post'?>">Event</a>
                         </li>
 						<li>
                             <a href="#">Transaksi</a>
                             <ul>
                                 <li>
-                                    <a href="<?php echo base_url().'paket_tour'?>">Tarian</a>
+                                    <a href="<?php echo base_url().'tarian'?>">Tarian</a>
                                 </li>
                                 <li>
                                     <a href="<?php echo base_url().'konfirmasi'?>">Konfirmasi Pembayaran</a>

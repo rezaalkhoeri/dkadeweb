@@ -6,6 +6,17 @@ class mtarian extends CI_Model{
 		return $hsl->result();
 	}
 
+	public function getTariFooter()
+	{
+		$hsl=$this->db->query("SELECT * FROM tari order by idtari asc limit 3");
+		return $hsl->result();		
+	}
+
+	function getTari($kode){
+		$hasil=$this->db->query("select * from tari where idtari='$kode'");
+		return $hasil;
+	}
+
 	function insert_data($data, $table){
 		$this->db->insert($table,$data);
 	}

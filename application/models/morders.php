@@ -1,19 +1,40 @@
 <?php
 class Morders extends CI_Model{
 
-    function cek_invoice($kode){
-        $hasil=$this->db->query("SELECT * FROM orders WHERE id_order='$kode'");
-        return $hasil;
+    function orderTari($table,$data){
+ 		$this->db->insert($table,$data);
+    }
+    function createInvoice()
+    {
+        $hasil=$this->db->query("SELECT MAX(invoice) AS INVOICE FROM pesanan");
+        return $hasil->result();
+    }
+    function getOrderTariByInvoice($kode){
+        $hasil=$this->db->query("SELECT * FROM pesanan
+                                JOIN tari ON pesanan.idTari = tari.idtari
+                                JOIN metode_bayar ON pesanan.metode_id = metode_bayar.id_metode
+                                WHERE pesanan.invoice = '$kode'");
+        return $hasil->result();
+    }
+    function deleteOrderByID($where){
+		$this->db->where($where);
+		$this->db->delete('pesanan');
+    }
+	function konfirmasiBayar($data, $table){
+		$this->db->insert($table,$data);
+	}
+    function getBayarByInvoice($invoice){
+        $hasil=$this->db->query("SELECT * FROM pembayaran WHERE invoice = '$invoice'");
+        return $hasil->result();
+    }
+    function deleteKonfirByID($where){
+		$this->db->where($where);
+		$this->db->delete('pembayaran');
     }
     function simpan_testimoni($nama,$email,$msg){
         $hasil=$this->db->query("INSERT INTO testimoni(nama,email,pesan,status,tgl_post) VALUES ('$nama','$email','$msg','0',curdate())");
         return $hasil;
     }
-    function get_pembayaran(){
-        $hasil=$this->db->query("SELECT id_bayar,tgl_bayar,metode,bank,order_id,SUM((hrg_dewasa*adult)+(hrg_anak*kids))AS total,jumlah,status_bayar,bukti_transfer,pengirim FROM pembayaran JOIN orders ON order_id=id_order JOIN metode_bayar ON metode_id_bayar=id_metode JOIN paket ON idpaket=paket_id_order WHERE tanggal GROUP BY order_id");
-        return $hasil;
-    }
-
     function get_orders(){
         $sql = "SELECT * FROM pesanan
                 LEFT JOIN paket_tari ON paket_tari.idpaket = pesanan.idPaket
@@ -23,6 +44,22 @@ class Morders extends CI_Model{
         return $hasil;
     }
 
+    public function get_pembayaran()
+    {
+        $sql = "SELECT * FROM pembayaran
+                JOIN pesanan ON pembayaran.invoice = pesanan.invoice
+                JOIN tari ON pesanan.idTari = tari.idtari
+                JOIN metode_bayar ON pesanan.metode_id = metode_bayar.id_metode";
+        $hasil = $this->db->query($sql)->result();
+        return $hasil;        
+    }
+    public function updateStatus($where)
+    {
+        $hasil=$this->db->query("UPDATE pesanan SET status_bayar = 'L' WHERE invoice='$where'");
+        return $hasil;
+    }
+
+    // 
     function bayar_selesai($id){
         $hasil=$this->db->query("UPDATE orders SET status_bayar='LUNAS' WHERE id_order='$id'");
         return $hasil;
@@ -31,16 +68,8 @@ class Morders extends CI_Model{
         $hasil=$this->db->query("UPDATE orders SET adult='$dewasa',kids='$anaks' WHERE id_order='$kode'");
         return $hasil;
     }
-    function hapus_orders($kode){
-        $hasil=$this->db->query("delete from orders WHERE id_order='$kode'");
-        return $hasil;
-    }
     function get_bank(){
         $hasil=$this->db->query("SELECT * FROM metode_bayar WHERE bank<>''");
-        return $hasil;
-    }
-    function simpan_bukti($noinvoice,$nama,$bank,$tgl_bayar,$jumlah,$gambar){
-        $hasil=$this->db->query("INSERT INTO pembayaran(tgl_bayar,metode_id_bayar,order_id,jumlah,pengirim,bukti_transfer)VALUES('$tgl_bayar','$bank','$noinvoice','$jumlah','$nama','$gambar')");
         return $hasil;
     }
     function hapus_bayar($kode){

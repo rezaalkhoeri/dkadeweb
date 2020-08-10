@@ -1,16 +1,3 @@
-<!--Counter Inbox-->
-<?php 
-    error_reporting(0);
-    $query=$this->db->query("SELECT * FROM tbl_inbox WHERE inbox_status='1'");
-    $query2=$this->db->query("SELECT * FROM orders WHERE status_bayar <> 'LUNAS'");
-    $query3=$this->db->query("SELECT * FROM testimoni WHERE status ='0'");
-    $query4=$this->db->query("SELECT * FROM orders INNER JOIN pembayaran ON pembayaran.order_id = orders.id_order WHERE orders.status_bayar = 'BELUM LUNAS'");
-    $jum_pesan=$query->num_rows();
-    $jum_order=$query2->num_rows();
-    $jum_testimoni=$query3->num_rows();
-    $jum_konfirmasi=$query4->num_rows();
-?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -35,49 +22,45 @@
 	
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
+
 <div class="wrapper">
+    <!--Header-->
+    <?php 
+        $this->load->view('backend/v_header');
+    ?>
 
-<!--Header-->
-<?php 
-    $this->load->view('backend/v_header');
-?>
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <?php 
+            $this->load->view('backend/v_sidebar');
+        ?>
+        <!-- /.sidebar -->
+    </aside>
 
-<!-- Left side column. contains the logo and sidebar -->
-<aside class="main-sidebar">
-<!-- sidebar: style can be found in sidebar.less -->
-<?php 
-  $this->load->view('backend/v_sidebar');
-?>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1> Dashboard </h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="#"><i class="fa fa-dashboard"></i> Home</a>
+                </li>
+                <li class="active">Dashboard</li>
+            </ol>
+        </section>
+        <!-- Main content -->
+        <?php
+            $this->load->view('backend/v_content_dashboard')
+        ?>
 
-<!-- /.sidebar -->
-</aside>
+    </div>
 
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-<!-- Content Header (Page header) -->
-<section class="content-header">
-    <h1>
-    Dashboard
-    <small></small>
-    </h1>
-    <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li class="active">Dashboard</li>
-    </ol>
-</section>
-
-<!-- Main content -->
-<?php
-    $this->load->view('backend/v_content_dashboard')
-?>
-<!-- /.content -->
-</div>
-<!-- /.content-wrapper -->
-
-<!-- footer -->
-<?php
-    $this->load->view('backend/v_footer');
-?>
+    <!-- footer -->
+    <?php
+        $this->load->view('backend/v_footer');
+    ?>
 
 
 </div>
@@ -105,48 +88,5 @@
 <!-- AdminLTE for demo purposes -->
 <script src="<?php echo base_url().'assets/dist/js/demo.js'?>"></script>
 
-<script>
-
-            var lineChartData = {
-                labels : <?php echo json_encode($bulan);?>,
-                datasets : [
-                    
-                    {
-                        fillColor: "rgba(60,141,188,0.9)",
-                        strokeColor: "rgba(60,141,188,0.8)",
-                        pointColor: "#3b8bba",
-                        pointStrokeColor: "#fff",
-                        pointHighlightFill: "#fff",
-                        pointHighlightStroke: "rgba(152,235,239,1)",
-                        data : <?php echo json_encode($value);?>
-                    }
-
-                ]
-                
-            }
-
-        var myLine = new Chart(document.getElementById("canvas").getContext("2d")).Line(lineChartData);
-
-        var canvas = new Chart(myLine).Line(lineChartData, {
-            scaleShowGridLines : true,
-            scaleGridLineColor : "rgba(0,0,0,.005)",
-            scaleGridLineWidth : 0,
-            scaleShowHorizontalLines: true,
-            scaleShowVerticalLines: true,
-            bezierCurve : true,
-            bezierCurveTension : 0.4,
-            pointDot : true,
-            pointDotRadius : 4,
-            pointDotStrokeWidth : 1,
-            pointHitDetectionRadius : 2,
-            datasetStroke : true,
-            tooltipCornerRadius: 2,
-            datasetStrokeWidth : 2,
-            datasetFill : true,
-            legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>",
-            responsive: true
-        });
-        
-        </script>
 </body>
 </html>

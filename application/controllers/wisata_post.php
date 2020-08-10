@@ -3,12 +3,13 @@
 class Wisata_post extends CI_Controller {
 	function __construct(){
         parent::__construct();
+		$this->load->model('mtarian');
         $this->load->model('mwisata');
         $this->load->model('mberita');
     }
 	public function index()
 	{
-        $x['paket']=$this->mberita->paket_footer();
+        $x['tari']=$this->mtarian->getTariFooter();
         $x['berita']=$this->mberita->berita_footer();
         $x['photo']=$this->mberita->get_photo();
 		$jum=$this->mwisata->count_wisata();

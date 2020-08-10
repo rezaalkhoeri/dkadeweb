@@ -1,32 +1,9 @@
 <!DOCTYPE html>
 <html lang="id">
-    <head>
-        <title>Paket Tour</title>
+    <?php 
+        $this->load->view('front/head');
+    ?>    
 
-        <!-- Meta tags -->
-        <meta charset="utf-8">
-        <meta name="description" content="Website Travel" />
-        <meta name="author" content="Code Travel" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-
-        <!-- Stylesheets -->
-        <link rel="stylesheet" href="<?php echo base_url().'theme/css/base.css'?>" />
-        <link rel="stylesheet" href="<?php echo base_url().'theme/css/skeleton.css'?>" />
-        <link rel="stylesheet" href="<?php echo base_url().'theme/css/flexslider.css'?>" />
-        <link rel="stylesheet" href="<?php echo base_url().'theme/css/jquery.fancybox-1.3.4.css'?>" />
-        <link rel="stylesheet" href="<?php echo base_url().'theme/css/lamoon.css'?>" />
-        <link href='http://fonts.googleapis.com/css?family=Lato|Lato:300|Vollkorn:400italic' rel='stylesheet' type='text/css'>
-        
-        <!-- Favicons -->
-        <link rel="shorcut icon" type="text/css" href="<?php echo base_url().'assets/images/favicon.ico'?>">
-    </head>
-        <?php 
-            function limit_words($string, $word_limit){
-                $words = explode(" ",$string);
-                return implode(" ",array_splice($words,0,$word_limit));
-            }
-                
-        ?>
     <body>
         
         <!-- Background Image -->
@@ -36,12 +13,9 @@
         <div id="root-container" class="container">
             <div id="wrapper" class="sixteen columns">
                 
-                <!-- Banner -->
-                <div id="sub-banner">
-                    <div id="logo">
-                    </div>
-                    <img src="<?php echo base_url().'theme/images/placeholders/header-image-static.jpg'?>" alt="" />
-                </div>
+                <?php 
+                    $this->load->view('front/banner');
+                ?>    
 
                 <!-- Main Menu -->                               
                 <div id="menu" class="page">
@@ -51,36 +25,29 @@
                     ?>
                     </ul>
                 </div>
-                
                 <!-- Content -->
                 <div id="content">
                     <div id="blog" class="container section">
                         <div id="blog-content" class="two-third column">
                         <?php
-                            foreach ($news->result_array() as $b) {
-                                $idberita=$b['idpaket'];
-                                $judul=$b['nama_paket'];
-                                $isi=limit_words($b['deskripsi'],20);
-                                $tglpost=$b['hrg_dewasa'];
-                                $gbr=$b['gambar'];
-                                $user=$b['hrg_anak'];
+                            foreach ($tari as $b) {
                         ?>
                             <div class="blog-item">
                                 <div class="hover">
-                                    <a href="<?php echo base_url().'paket_tour/detail_paket/'.$idberita;?>">
+                                    <a href="<?php echo base_url().'tarian/detail_tari/'.$b->idtari;?>">
                                     <div class="readmore">
                                         <span class="text"><span class="anchor"></span></span>
-                                    </div> <img width="560" height="120" src="<?php echo base_url().'assets/gambars/'.$gbr;?>" alt="" /> </a>
+                                    </div> <img width="560" height="120" src="<?php echo base_url().'assets/gambars/'.$b->gambar;?>" alt="" /> </a>
                                 </div>
-                                <h2 class="blog"><a href="<?php echo base_url().'paket_tour/detail_paket/'.$idberita;?>"><?php echo $judul;?></a></h2>
+                                <h2 class="blog"><a href="<?php echo base_url().'tarian/detail_tari/'.$b->idtari;?>"><?php echo $b->nama_tari;?></a></h2>
                                 <p class="blog-item-meta">
                                     
                                 </p>
                                 <p>
-                                    <?php echo $isi;?> ...
+                                    <?php echo $b->deskripsi;?> ...
                                 </p>
                                 <p>
-                                    <a href="<?php echo base_url().'paket_tour/detail_paket/'.$idberita;?>" class="small blue button">Read more ...</a>
+                                    <a href="<?php echo base_url().'tarian/detail_tari/'.$b->idtari;?>" class="small blue button">Read more ...</a>
                                 </p>
                             </div>
                             <?php
@@ -101,23 +68,18 @@
                                 </form>
                             </div>
                             <div class="sidebar-item">
-                                <h3 class="nobg">Paket Tour</h3>
+                                <h3 class="nobg">Latest Events</h3>
                                 <ul id="latest-events" class="square">
-                                    <?php
-                                    foreach ($brt->result_array() as $b) {
-                                        $idpaket=$b['idpaket'];
-                                        $nmpaket=$b['nama_paket'];
-                                        $hrgdewasa=$b['hrg_dewasa'];
-                                        $hrganak=$b['hrg_anak'];
-                                        $gbr=$b['gambar'];
-                                        $des=$b['deskripsi'];
-                                ?>
-                                    <li>
-                                        <a href="<?php echo base_url().'paket_tour/detail_paket/'.$idpaket;?>"><img width="50" height="50" src="<?php echo base_url().'assets/gambars/'.$gbr;?>" alt="" /><span><?php echo $nmpaket;?></span></a>
-                                    </li>
                                 <?php
-                                    }
+                                foreach ($event->result_array() as $h) {
+                                    $idevent    =$h['idevent'];
+                                    $nama_event =$h['nama_event'];
+                                    $gambar     =$h['gambar'];
                                 ?>
+                                <li>
+                                    <a href="<?php echo base_url().'event_post/detail_event/'.$idevent;?>"><img width="50" height="50" src="<?php echo base_url().'assets/gambars/'.$gambar;?>" alt="" /><?php echo $nama_event;?></a>
+                                </li>
+                                <?php } ?> 
                                 </ul>
                             </div>
                             <div class="sidebar-item">

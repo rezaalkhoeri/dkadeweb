@@ -3,6 +3,7 @@
 class Welcome extends CI_Controller {
 	function __construct(){
         parent::__construct();
+		$this->load->model('mtarian');
         $this->load->model('mlogin');
         $this->load->model('mpengguna');
         $this->load->model('mberita');
@@ -23,7 +24,7 @@ class Welcome extends CI_Controller {
 		$cek_ip=$this->m_pengunjung->cek_ip($user_ip);
 		$cek=$cek_ip->num_rows();
 		if($cek > 0){
-			$x['paket']=$this->mberita->paket_footer();
+			$x['tari']=$this->mtarian->getTariFooter();
 			$x['berita']=$this->mberita->berita_footer();
 			$x['photo']=$this->mberita->get_photo();
 
@@ -33,7 +34,7 @@ class Welcome extends CI_Controller {
 			$this->load->view('front/home',$x);
 		}else{
 			$this->m_pengunjung->simpan_user_agent($user_ip,$agent);
-			$x['paket']=$this->mberita->paket_footer();
+			$x['tari']=$this->mtarian->getTariFooter();
 			$x['berita']=$this->mberita->berita_footer();
 			$x['photo']=$this->mberita->get_photo();
 

@@ -9,7 +9,6 @@ class Mpaket extends CI_Model{
 		return $hasil;
 	}
 
-	
 	function get_kategori(){
 		$hasil=$this->db->query("select * from kategori_paket");
 		return $hasil;

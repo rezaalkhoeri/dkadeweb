@@ -101,7 +101,7 @@
                                 </form>
                             </div>
                             <div class="sidebar-item">
-                                <h3 class="nobg">Paket Tour</h3>
+                                <h3 class="nobg">Paket Tari</h3>
                                 <ul id="latest-events" class="square">
                                     <?php
                                     foreach ($brt->result_array() as $b) {

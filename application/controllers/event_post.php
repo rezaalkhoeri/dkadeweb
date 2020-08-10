@@ -3,12 +3,13 @@
 class Event_post extends CI_Controller {
 	function __construct(){
         parent::__construct();
+        $this->load->model('mtarian');
         $this->load->model('mevent');
         $this->load->model('mberita');
     }
 	public function index()
 	{
-        $x['paket']=$this->mberita->paket_footer();
+        $x['tari']=$this->mtarian->getTariFooter();
         $x['berita']=$this->mberita->berita_footer();
         $x['photo']=$this->mberita->get_photo();
 		$jum=$this->mevent->count_event();
@@ -33,8 +34,9 @@ class Event_post extends CI_Controller {
         $x['brt']=$this->mevent->tampil_event();
 		$this->load->view('front/v_event',$x);
 	}
-	function detail_event(){
-        $x['paket']=$this->mberita->paket_footer();
+
+    function detail_event(){
+        $x['tari']=$this->mtarian->getTariFooter();
         $x['berita']=$this->mberita->berita_footer();
         $x['photo']=$this->mberita->get_photo();
 		$kode=$this->uri->segment(3);

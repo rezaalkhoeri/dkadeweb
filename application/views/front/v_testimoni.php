@@ -1,32 +1,10 @@
 <!DOCTYPE html>
 <html lang="id">
     <!--<![endif]-->
-    <head>
-        <title>Testimonial</title>
+    <?php 
+        $this->load->view('front/head');
+    ?>    
 
-        <!-- Meta tags -->
-        <meta charset="utf-8">
-        <meta name="description" content="Website Travel" />
-        <meta name="author" content="Code Travel" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-
-        <!-- Stylesheets -->
-        <link rel="stylesheet" href="<?php echo base_url().'theme/css/base.css'?>" />
-        <link rel="stylesheet" href="<?php echo base_url().'theme/css/skeleton.css'?>" />
-        <link rel="stylesheet" href="<?php echo base_url().'theme/css/flexslider.css'?>" />
-        <link rel="stylesheet" href="<?php echo base_url().'theme/css/jquery.fancybox-1.3.4.css'?>" />
-        <link rel="stylesheet" href="<?php echo base_url().'theme/css/lamoon.css'?>" />
-        <link href='http://fonts.googleapis.com/css?family=Lato|Lato:300|Vollkorn:400italic' rel='stylesheet' type='text/css'>
-        
-        <!-- Favicons -->
-        <link rel="shorcut icon" type="text/css" href="<?php echo base_url().'assets/images/favicon.ico'?>">
-        <?php 
-            function limit_words($string, $word_limit){
-                $words = explode(" ",$string);
-                return implode(" ",array_splice($words,0,$word_limit));
-            }
-        ?>
-    </head>
     <body>
         
         <!-- Background Image -->
@@ -36,12 +14,9 @@
         <div id="root-container" class="container">
             <div id="wrapper" class="sixteen columns">
                 
-                <!-- Banner -->
-                <div id="sub-banner">
-                    <div id="logo">
-                    </div>
-                    <img src="<?php echo base_url().'theme/images/placeholders/header-image-static.jpg'?>" alt="" />
-                </div>
+                <?php 
+                    $this->load->view('front/banner');
+                ?>    
                 
                 <!-- Main Menu -->
                 <div id="menu" class="page">
@@ -103,7 +78,7 @@
                                             </p>
                                             <p>
                                                 <label></label>
-                                                <input class="medium blue    button" id="submit-button" type="submit" name="Submit" value="Submit" />
+                                                <input class="medium blue button" id="submit-button" type="submit" name="Submit" value="Submit" />
                                             </p>
                                         </form>
                                     </div>
@@ -125,13 +100,13 @@
                                 <h3 class="nobg">Latest Events</h3>
                                 <ul id="latest-events" class="square">
                                 <?php
-                                foreach ($paket->result_array() as $h) {
-                                    $idpaketf=$h['idpaket'];
-                                    $namapaketf=$h['nama_paket'];
-                                    $gambarf=$h['gambar'];
+                                foreach ($event->result_array() as $h) {
+                                    $idevent    =$h['idevent'];
+                                    $nama_event =$h['nama_event'];
+                                    $gambar     =$h['gambar'];
                                 ?>
                                 <li>
-                                    <a href="<?php echo base_url().'paket_tour/detail_paket/'.$idpaketf;?>"><img width="50" height="50" src="<?php echo base_url().'assets/gambars/'.$gambarf;?>" alt="" /><?php echo $namapaketf;?></a>
+                                    <a href="<?php echo base_url().'event_post/detail_event/'.$idevent;?>"><img width="50" height="50" src="<?php echo base_url().'assets/gambars/'.$gambar;?>" alt="" /><?php echo $nama_event;?></a>
                                 </li>
                                 <?php } ?> 
                                 </ul>

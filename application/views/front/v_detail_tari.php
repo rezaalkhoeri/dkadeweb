@@ -54,7 +54,7 @@
                     </ul>
                 </div>
                     <?php
-                        $n=$news->row_array();
+                        $n=$detailtari->row_array();
                     ?>
                 <!-- Content -->
                 <div id="content">
@@ -62,19 +62,14 @@
                         <div id="blog-content" class="two-third column end">
                             <div id="post-content" class="blog-item">
                                 <img width="700" height="400" src="<?php echo base_url().'assets/gambars/'.$n['gambar'];?>" alt="">
-                                <h2 class="blog"><a href="single.html"><?php echo $n['nama_paket'];?></a></h2>
-                                <p class="blog-item-meta">
-                                    <!--<?php echo $n['tglpost'];?>, by <?php echo $n['user'];?>, <a href="#">5 Comments</a>-->
-                                </p>
+                                <h2 class="blog"><a href="single.html"><?php echo $n['nama_tari'];?></a></h2>
                                 <p>
                                     <?php echo $n['deskripsi'];?>
                                 </p>
                                 
                                 <div id="about-author">
-                                    <h4><a href="<?php echo base_url().'paket_tour/pesan_paket/'.$n['idpaket'];?>" class="small blue button">Pesan Sekarang</a></h2>
-                                    
-                                </div>
-                                
+                                    <h4><a href="<?php echo base_url().'order/pesan_tarian/'.$n['idtari'];?>" class="small blue button">Pesan Sekarang</a></h2>
+                                </div>                                
                                 
                             </div>
                         </div>
@@ -90,23 +85,18 @@
                             </div>
                             
                             <div class="sidebar-item">
-                                <h3 class="nobg">Paket Tour</h3>
+                                <h3 class="nobg">Latest Events</h3>
                                 <ul id="latest-events" class="square">
-                                    <?php
-                                    foreach ($brt->result_array() as $b) {
-                                        $idpaket=$b['idpaket'];
-                                        $nmpaket=$b['nama_paket'];
-                                        $hrgdewasa=$b['hrg_dewasa'];
-                                        $hrganak=$b['hrg_anak'];
-                                        $gbr=$b['gambar'];
-                                        $des=$b['deskripsi'];
-                                ?>
-                                    <li>
-                                        <a href="<?php echo base_url().'paket_tour/detail_paket/'.$idpaket;?>"><img width="50" height="50" src="<?php echo base_url().'assets/gambars/'.$gbr;?>" alt="" /><span><?php echo $nmpaket;?></span></a>
-                                    </li>
                                 <?php
-                                    }
+                                foreach ($event->result_array() as $h) {
+                                    $idevent    =$h['idevent'];
+                                    $nama_event =$h['nama_event'];
+                                    $gambar     =$h['gambar'];
                                 ?>
+                                <li>
+                                    <a href="<?php echo base_url().'event_post/detail_event/'.$idevent;?>"><img width="50" height="50" src="<?php echo base_url().'assets/gambars/'.$gambar;?>" alt="" /><?php echo $nama_event;?></a>
+                                </li>
+                                <?php } ?> 
                                 </ul>
                             </div>
                             <div class="sidebar-item">

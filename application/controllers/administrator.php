@@ -59,9 +59,9 @@ class Administrator extends CI_Controller{
                         $idtarian = $this->session->userdata('idTari');
 
                         if ($idtarian !== "") {
-                            redirect('paket_tour/pesan_paket/'.$idtarian);
+                            redirect('order/pesan_tarian/'.$idtarian);
                         } else {
-                            redirect('paket_tour');
+                            redirect('order');
                         }                       
                     }
                 }else{
@@ -69,7 +69,10 @@ class Administrator extends CI_Controller{
                     redirect('welcome/loginUser');
                 }
             } 
-        }        
+        } else {
+            echo $this->session->set_flashdata('msg','<div class="alert alert-danger" role="alert"><button type="button" class="close" data-dismiss="alert"><span class="fa fa-close"></span></button> Username Atau Password Salah</div>');
+            redirect('administrator');
+        }       
     }
 
     function berhasillogin(){
